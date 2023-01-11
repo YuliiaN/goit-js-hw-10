@@ -29,6 +29,8 @@ ul {
   list-style: none;
 }
 
+/* cards styles */
+
 .country-list__item {
   display: flex;
   gap: 10px;
