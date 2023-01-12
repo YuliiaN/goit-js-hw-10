@@ -20,7 +20,6 @@ function onInputChanges(event) {
   if (!value) {
     clearDiv();
     clearUl();
-    return;
   } else {
     fetchCountries(value.trim())
       .then(countries => {
@@ -37,37 +36,31 @@ function onInputChanges(event) {
           renderCountryCard(countries[0]);
         }
       })
-      .catch(console.log);
+      .catch(debounce(errorAlert, DEBOUNCE_DELAY));
   }
 }
 
-function renderCountriesList(country) {
-  const name = country.name.common;
-  const flag = country.flags.svg;
+function renderCountriesList({ name, flags }) {
   const markup = `
     <li class="country-list__item">
-        <img src="${flag}" alt="${name} Flag" class="flag" />
-        <h2 class="country-list__title">${name}</h2>
+        <img src="${flags.svg}" alt="${name.common} Flag" class="flag" />
+        <h2 class="country-list__title">${name.common}</h2>
     </li>`;
 
   refs.ulRef.insertAdjacentHTML('beforeend', markup);
 }
 
-function renderCountryCard(country) {
-  const name = country.name.common;
-  const flag = country.flags.svg;
-  const capital = country.capital[0];
-  const population = country.population;
-  const languages = Object.values(country.languages).join(', ');
+function renderCountryCard({ name, flags, capital, population, languages }) {
+  const langs = Object.values(languages).join(', ');
 
   const markup = `<div class="country-name">
-  <img src="${flag}" alt="${name} Flag" class="flag" />
-  <h2 class="country-title">${name}</h2>
+  <img src="${flags.svg}" alt="${name.common} Flag" class="flag" />
+  <h2 class="country-title">${name.common}</h2>
 </div>
 <ul class="country-data-list">
   <li class="country-data-item"><span class="span">Capital:</span> ${capital}</li>
   <li class="country-data-item"><span class="span">Population:</span> ${population}</li>
-  <li class="country-data-item"><span class="span">Languages:</span> ${languages}</li>
+  <li class="country-data-item"><span class="span">Languages:</span> ${langs}</li>
 </ul>
 `;
 
@@ -81,4 +74,8 @@ function clearDiv() {
 
 function clearUl() {
   refs.ulRef.innerHTML = '';
+}
+
+function errorAlert() {
+  Notify.failure('Oops, there is no country with that name');
 }
