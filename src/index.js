@@ -9,6 +9,7 @@ const refs = {
   ulRef: document.querySelector('.country-list'),
   divRef: document.querySelector('.country-info'),
 };
+const itemsList = [];
 
 refs.inputRef.addEventListener(
   'input',
@@ -16,12 +17,12 @@ refs.inputRef.addEventListener(
 );
 
 function onInputChanges(event) {
-  const value = event.target.value;
+  const value = event.target.value.trim();
   if (!value) {
     clearDiv();
     clearUl();
   } else {
-    fetchCountries(value.trim())
+    fetchCountries(value)
       .then(countries => {
         if (countries.length > 10) {
           Notify.info(
@@ -29,9 +30,10 @@ function onInputChanges(event) {
           );
         } else if (countries.length > 2 && countries.length < 10) {
           for (const country of countries) {
-            clearDiv();
-            renderCountriesList(country);
+            itemsList.push(country);
           }
+          clearDiv();
+          renderCountriesList(itemsList);
         } else {
           renderCountryCard(countries[0]);
         }
@@ -40,12 +42,16 @@ function onInputChanges(event) {
   }
 }
 
-function renderCountriesList({ name, flags }) {
-  const markup = `
+function renderCountriesList(arr) {
+  const markup = arr
+    .map(
+      ({ name, flags }) => `
     <li class="country-list__item">
-        <img src="${flags.svg}" alt="${name.common} Flag" class="flag" />
-        <h2 class="country-list__title">${name.common}</h2>
-    </li>`;
+      <img src="${flags.svg}" alt="${name.common} Flag" class="flag" />
+      <h2 class="country-list__title">${name.common}</h2>
+    </li>`
+    )
+    .join('');
 
   refs.ulRef.insertAdjacentHTML('beforeend', markup);
 }
