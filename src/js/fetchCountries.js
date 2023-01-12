@@ -1,7 +1,6 @@
-import Notiflix from 'notiflix';
-export default fetchCountries;
+import { Notify } from 'notiflix';
 
-function fetchCountries(name) {
+export default function fetchCountries(name) {
   return fetch(
     `https://restcountries.com/v3.1/name/${name}?fields=name,capital,population,flags,languages`
   )
@@ -11,5 +10,5 @@ function fetchCountries(name) {
       }
       return response.json();
     })
-    .catch(Notiflix.Notify.failure('Oops, there is no country with that name'));
+    .catch(Notify.failure('Oops, there is no country with that name'));
 }

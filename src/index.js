@@ -1,7 +1,7 @@
 import './css/styles.css';
-import fetchCountries from './fetchCountries.js';
+import fetchCountries from './js/fetchCountries.js';
 import debounce from 'lodash.debounce';
-import Notiflix from 'notiflix';
+import { Notify } from 'notiflix';
 
 const DEBOUNCE_DELAY = 300;
 const refs = {
@@ -25,7 +25,7 @@ function onInputChanges(event) {
     fetchCountries(value.trim())
       .then(countries => {
         if (countries.length > 10) {
-          Notiflix.Notify.info(
+          Notify.info(
             'Too many matches found. Please enter a more specific name.'
           );
         } else if (countries.length > 2 && countries.length < 10) {
@@ -42,25 +42,27 @@ function onInputChanges(event) {
 }
 
 function renderCountriesList(country) {
+  const name = country.name.common;
   const flag = country.flags.svg;
   const markup = `
     <li class="country-list__item">
-        <img src="${flag}" alt="${country.name.common} Flag" class="flag" />
-        <h2 class="country-list__title">${country.name.common}</h2>
+        <img src="${flag}" alt="${name} Flag" class="flag" />
+        <h2 class="country-list__title">${name}</h2>
     </li>`;
 
   refs.ulRef.insertAdjacentHTML('beforeend', markup);
 }
 
 function renderCountryCard(country) {
+  const name = country.name.common;
   const flag = country.flags.svg;
   const capital = country.capital[0];
   const population = country.population;
   const languages = Object.values(country.languages).join(', ');
 
   const markup = `<div class="country-name">
-  <img src="${flag}" alt="${country.name.common} Flag" class="flag" />
-  <h2 class="country-title">${country.name.common}</h2>
+  <img src="${flag}" alt="${name} Flag" class="flag" />
+  <h2 class="country-title">${name}</h2>
 </div>
 <ul class="country-data-list">
   <li class="country-data-item"><span class="span">Capital:</span> ${capital}</li>
